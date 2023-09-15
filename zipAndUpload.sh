@@ -108,6 +108,6 @@ data=`getJsonValuesByAwk "$UPLOAD" "data" "defaultValue"`
 buildV=`getJsonValuesByAwk "$data" "appBuildVersion" "defaultValue"`
 shortUrl=`getJsonValuesByAwk "$data" "appShortcutUrl" "defaultValue"`
 
-echo "https://www.pgyer.com/"$shortUrl 
+echo "https://www.pgyer.com/"$shortUrl | tr -d '"'
 echo "build:" $buildV
 
