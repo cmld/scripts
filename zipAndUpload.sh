@@ -1,14 +1,18 @@
 # 直接拖到flutter项目路径下执行
 
+if [ "$1" = "Pro" ];then
+    flutter build ios --flavor Pro --release
+    # flutter build ipa --flavor Pro --release
+else
+    flutter build ios --release
+fi
+
+
 
 #--------------------------------------------#
 # 需要配置绝对路径
 filePath=/Users/yk/Desktop/Payload
 ipaPath=/Users/yk/Desktop/Payload.ipa
-
-# 蒲公英用户信息
-apiKey=90fbb4990c5322bf4d524a739fad2d0d
-userKey=a7d0381752b8f4a5b4ad2176f1d815c3
 
 #--------------------------------------------#
 
@@ -98,11 +102,15 @@ function getJsonValuesByAwk() {
 # 上传接口失败 不知道为啥么
 # curl -H "Content-Type: multipart/form-data" -D - --form-string "key=$key" --form-string "signature=$signature" --form-string "x-cos-security-token=$token" -F "file=@/Users/yk/Desktop/Payload.ipa" $endpoint
 
+# 蒲公英用户信息
+apiKey=90fbb4990c5322bf4d524a739fad2d0d
+userKey=a7d0381752b8f4a5b4ad2176f1d815c3
+
 # API 1.0
 UPLOAD=`curl -F "file=@$ipaPath" \
 -F "uKey=$userKey" \
 -F "_api_key=$apiKey" \
-https://www.pgyer.com/apiv1/app/upload`
+https://www.xcxwo.com/apiv1/app/upload`
 
 data=`getJsonValuesByAwk "$UPLOAD" "data" "defaultValue"`
 buildV=`getJsonValuesByAwk "$data" "appBuildVersion" "defaultValue"`
