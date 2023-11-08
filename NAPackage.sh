@@ -1,39 +1,32 @@
-# 直接拖到flutter项目路径下执行
 
-if [ "$1" = "ipa" ];then
-    flutter build ipa --flavor Pro --release
-    # xcrun iTMSTransporter -m upload -assetFile /Users/yk/Desktop/jt-out-malaysia/build/ios/ipa/jt_out_malaysia.ipa -u armand.chen@jtexpress.com -p Clmd123. -v eXtreme
-    exit
-fi
+projectName=JtStation-Indonesia-iOS
 
-if [ "$1" = "Pro" ];then
-    flutter build ios --flavor Pro --release
-    # flutter build ipa --flavor Pro --release
-else
-    flutter build ios --release
-fi
+#获取当前环境路径
+prejectFilePath=`pwd` 
+workspacePath=$prejectFilePath/$projectName.xcworkspace
 
+echo $workspacePath
+
+time=$(date "+%Y-%m-%d-%H:%M:%S")
+
+# ipa导出成功后的存放路径
+output=/Users/yk/Desktop/archives/$projectName/$time
+# 构建完成功后文件存放路径
+archiveOutput=$output/$projectName.xcarchive
+# 导出相关设置文件的位置路径 第一次需要用xcode Preoject->Archive, .xcarchive显示包内容中获取到
+plistPath=/Users/yk/Desktop/archives/$projectName/ExportOptions-ad.plist
+
+
+# 命令
+xcodebuild clean -workspace $workspacePath -scheme $projectName -configuration Release 
+xcodebuild archive -workspace $workspacePath -scheme $projectName -archivePath $archiveOutput -destination 'generic/platform=iOS'
+xcodebuild -exportArchive -archivePath $archiveOutput -exportPath $output -exportOptionsPlist $plistPath
 
 
 #--------------------------------------------#
 # 需要配置绝对路径
-filePath=/Users/yk/Desktop/Payload
-ipaPath=/Users/yk/Desktop/Payload.ipa
+ipaPath=$output/$projectName.ipa
 
-
-
-#--------------------------------------------#
-
-prejectFilePath=`pwd` 
-# /Users/yk/Desktop/jt-out-malaysia/build/ios/iphoneos/Runner.app
-appPath=$prejectFilePath/build/ios/iphoneos/Runner.app
-
-# 将.app压缩成.ipa
-rm -R $ipaPath
-rm -R $filePath/*
-cp -r $appPath $filePath
-# 压缩命令
-ditto -c -k --sequesterRsrc --keepParent $filePath $ipaPath
 
 ### 方法简要说明：
 ### 1. 是先查找一个字符串：带双引号的key。如果没找到，则直接返回defaultValue。
@@ -126,4 +119,3 @@ shortUrl=`getJsonValuesByAwk "$data" "appShortcutUrl" "defaultValue"`
 
 echo "https://www.xcxwo.com/"$shortUrl | tr -d '"'
 echo "build:" $buildV
-
