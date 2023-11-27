@@ -1,3 +1,6 @@
+#test1
+#test1
+
 
 projectName=JtStation-Indonesia-iOS
 
@@ -111,11 +114,11 @@ userKey=a7d0381752b8f4a5b4ad2176f1d815c3
 UPLOAD=`curl -F "file=@$ipaPath" \
 -F "uKey=$userKey" \
 -F "_api_key=$apiKey" \
-https://www.xcxwo.com/apiv1/app/upload`
+http://www.pgyer.com/apiv1/app/upload`
 
 data=`getJsonValuesByAwk "$UPLOAD" "data" "defaultValue"`
 buildV=`getJsonValuesByAwk "$data" "appBuildVersion" "defaultValue"`
 shortUrl=`getJsonValuesByAwk "$data" "appShortcutUrl" "defaultValue"`
 
-echo "https://www.xcxwo.com/"$shortUrl | tr -d '"'
+echo "http://www.pgyer.com/"$shortUrl | tr -d '"'
 echo "build:" $buildV

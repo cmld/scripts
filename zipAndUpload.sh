@@ -1,15 +1,32 @@
+prejectFilePath=`pwd` 
+
+
 # 直接拖到flutter项目路径下执行
 
 if [ "$1" = "ipa" ];then
+
+    echo "生产包上传App Store content"
+    #生产包上传到App Store content
+
     flutter build ipa --flavor Pro --release
-    # xcrun iTMSTransporter -m upload -assetFile /Users/yk/Desktop/jt-out-malaysia/build/ios/ipa/jt_out_malaysia.ipa -u armand.chen@jtexpress.com -p Clmd123. -v eXtreme
+    # APP Store 相关
+    store_api_key="RB9S793N8C" #生成的时候有个.p8文件需要下载放到用户文件目录下特定名字的文件夹里
+    store_issuer_id="a069fa47-aa6d-4256-8f6b-9ad3851f03c4"
+
+    #ipa包路径
+    ipaFile=$prejectFilePath/build/ios/ipa/jt_out_malaysia.ipa
+
+    xcrun altool --upload-app --type ios -f $ipaFile --apiKey $store_api_key --apiIssuer $store_issuer_id --verbose
+    
     exit
 fi
 
 if [ "$1" = "Pro" ];then
+    echo "生产包上传蒲公英"
     flutter build ios --flavor Pro --release
     # flutter build ipa --flavor Pro --release
 else
+    echo "UAT包上传蒲公英"
     flutter build ios --release
 fi
 
@@ -20,11 +37,7 @@ fi
 filePath=/Users/yk/Desktop/Payload
 ipaPath=/Users/yk/Desktop/Payload.ipa
 
-
-
 #--------------------------------------------#
-
-prejectFilePath=`pwd` 
 # /Users/yk/Desktop/jt-out-malaysia/build/ios/iphoneos/Runner.app
 appPath=$prejectFilePath/build/ios/iphoneos/Runner.app
 
@@ -118,12 +131,12 @@ userKey=a7d0381752b8f4a5b4ad2176f1d815c3
 UPLOAD=`curl -F "file=@$ipaPath" \
 -F "uKey=$userKey" \
 -F "_api_key=$apiKey" \
-https://www.xcxwo.com/apiv1/app/upload`
+http://www.pgyer.com/apiv1/app/upload`
 
 data=`getJsonValuesByAwk "$UPLOAD" "data" "defaultValue"`
 buildV=`getJsonValuesByAwk "$data" "appBuildVersion" "defaultValue"`
 shortUrl=`getJsonValuesByAwk "$data" "appShortcutUrl" "defaultValue"`
 
-echo "https://www.xcxwo.com/"$shortUrl | tr -d '"'
+echo "http://www.pgyer.com/"$shortUrl | tr -d '"'
 echo "build:" $buildV
 
