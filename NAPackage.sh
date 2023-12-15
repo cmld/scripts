@@ -1,5 +1,3 @@
-#test1
-#test1
 
 
 projectName=JtStation-Indonesia-iOS
