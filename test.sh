@@ -21,13 +21,23 @@
 
 # xcrun altool --upload-app --type ios -f $ipaPath --apiKey $store_api_key --apiIssuer $store_issuer_id --verbose
 
-# 获取当前文件夹下指定后缀的文件名，不递归子目录
-extension=".xcworkspace"
-file=$(find . -maxdepth 1 -type f -name "*$extension" | head -n 1)
-projectName=$(basename "$file" "$extension")
-if [ -z "$projectName" ]; then
-    echo "没有找到后缀为 $extension 的文件"
-    test="hh"
-fi
-echo "$filename" 
-echo "$test"
+
+# des=~/Desktop/archives/JtStation-Indonesia-iOS
+
+# # 获取当前文件夹下指定后缀的文件名，不递归子目录
+# extension=".plist"
+# # file=$(find . -maxdepth 1 -type f -name "*$extension" -print0 | head -n 1)
+# file=$(find $des -regex ".*$extension" -maxdepth 1)
+# echo "$file"
+# projectName=$(basename "$file" "$extension")
+# if [ -z "$projectName" ]; then
+#     echo "没有找到后缀为 $extension 的文件"
+# fi
+# echo "$projectName" 
+projectName=Malaysia\ Customer\ App
+ipaPath=/Users/yk/Desktop/archives/Malaysia\ Customer\ App/2024-01-30-18\:35\:35/Malaysia\ Customer\ App.ipa
+archiveOutput=/Users/yk/Desktop/archives/Malaysia\ Customer\ App/2024-01-30-18\:35\:35/Malaysia\ Customer\ App.xcarchive
+ipaDir=$archiveOutput/Products/Applications/Payload
+mkdir "$ipaDir"
+cp -r "$archiveOutput/Products/Applications/$projectName.app" "$ipaDir"
+ditto -c -k --sequesterRsrc --keepParent "$ipaDir" "$ipaPath"
