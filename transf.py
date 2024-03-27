@@ -1,6 +1,15 @@
 import os
 import re
 import openpyxl
+import sys
+
+# 获取命令行参数
+args = sys.argv
+
+# 打印命令行参数
+print("Script name:", args[0])  # 第一个参数是脚本本身的名称
+print("Arguments:", args[1:])  # 其他参数是传递给脚本的命令行参数
+
 
 def extract_strings(directory, pattern):
     matching_strings = []  # 存储匹配的字符串
@@ -22,45 +31,52 @@ def extract_strings(directory, pattern):
 
     return matching_strings
 
+
+# 找出项目中所有的待翻译文本
 directory_path = '/Users/yk/Desktop/jt-station-indonesia-ios/JtStation-Indonesia-iOS/Classes'
-regex_pattern = r'"([^"]*?)-r".localized'
-# matchs = extract_strings(directory_path, regex_pattern)
-# matchs = list(set(matchs))
-# print(matchs)
+regex_pattern = r'"([^"]*?)-r"'
+matchs = extract_strings(directory_path, regex_pattern)
+matchs = list(set(matchs))
+print("\n待匹配：", matchs, "\n")
 # for extracted_string in matchs:
 #     print(extracted_string)
 
-matchs = ['快递公司ID未获取', '重量', '打印时间', '总体积', '手机号需超过8位', '批量打印完成', '打印失败', '折扣和优惠券，二者选最优惠的', '运费信息为空，请补全寄件信息', '功能操作待上线', '重复运单', '请选择结算方式', '金额(IDR)', '共%s单', '交接票数：%s票，是否确认交接', '扫一扫，在线寄快递', '当前产品类型没有保价类型可选', '正在获取信息，请稍后重试', '网点编号', '操作员', 'jms订单号', '请填写物品信息', '请填写收寄人信息', '先填写寄/收件人信息', '驿站名称']
 
-# language = 0 # 中文
-# language = 1 # 英文
-language = 2 # 其他
+############
+
+## 以下是搜索输出
+matchs = ['保存修改', '日期+货架号+单号后4位', '尾号', '更换', '模板选择', '条', '请获取运单号']
 
 matchDic = {}
 
 # 打开 Excel 文件
-workbook = openpyxl.load_workbook('transf-iden.xlsx')
+workbook = openpyxl.load_workbook('transfiden1.xlsx')
 
-# 选择工作表（Sheet），默认选择第一个工作表
-sheet = workbook.active
+def read2output(language, matchs):
+    # 选择工作表（Sheet），默认选择第一个工作表
+    sheet = workbook.active
 
-# 读取每行的第一项
-for row in sheet.iter_rows(min_row=1, values_only=True):
-    if row and row[0] and row[language]:  # 确保行非空
-        if row[0] in matchs :
-            key = row[1].lower().replace(" ", "_")
-            formatted_string = "\"%s\" = \"%s\"; // %s" % (key, row[language], row[0])
-            matchDic["%s-r" % (row[0])] = key
-            print(formatted_string)
-            matchs = [value for value in matchs if value != row[0]]
+    # 读取每行的第一项
+    for row in sheet.iter_rows(min_row=1, values_only=True):
+        if row and row[0] and row[language]:  # 确保行非空
+            if row[0] in matchs :
+                key = row[1].lower().replace(" ", "_")
+                formatted_string = "\"%s\" = \"%s\"; // %s" % (key, row[language], row[0])
+                matchDic["%s" % (row[0])] = key
+                print(formatted_string)
+                # matchs = [value for value in matchs if value != row[0]]
+
+    print("\n")
+
+
+read2output(0, matchs)
+read2output(1, matchs)
+read2output(2, matchs)
 
 # 关闭 Excel 文件
 workbook.close()
 
-
-print(matchs)
-
-print(matchDic)
-
+filtered_array = [x for x in matchs if x not in list(matchDic.keys())]
+print("\n未匹配的：", filtered_array)
 
 
