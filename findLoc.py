@@ -1,7 +1,11 @@
+
 import os
 import re
 import openpyxl
 import sys
+
+
+
 
 # 获取命令行参数
 args = sys.argv
@@ -33,7 +37,8 @@ def extract_strings(directory, pattern):
 
 
 # 找出项目中所有的待翻译文本
-directory_path = '/Users/yk/Desktop/JTS-Malaysia-VIP-iOS/Malaysia Customer App/Main'
+directory_path = '/Users/yk/Desktop/jt-customer-malaysia-ios/JTExpressMy'
+
 regex_pattern = r'"([^"]*?)-r"'
 matchs = extract_strings(directory_path, regex_pattern)
 matchs = list(set(matchs))
@@ -42,40 +47,20 @@ print("\n待匹配：", matchs, "\n")
 #     print(extracted_string)
 
 
-############
+## 对比本地
+filename = '/Users/yk/Desktop/jt-customer-malaysia-ios/JTExpressMy/Public/Lanauage/zh-Hans.lproj/Localizable.strings'
 
-## 以下是搜索输出
-matchs = ['MS', 'NE', 'COD金额 > 0', '已复制', '保价金额', '长/宽/高', '运输中']
+exsitArr = []
+# 打开文件
+with open(filename, 'r') as file:
+    # 逐行读取文件内容
+    for line in file:
+        # 处理每一行内容，例如打印或者其他操作
+        for item in matchs:
+            itemStr = "\"%s\"" % (item)
+            if itemStr in line:
+                print(line.strip())  # 使用 strip() 方法去除行尾的换行符
+                exsitArr.append(item)
 
-matchDic = {}
-
-# 打开 Excel 文件
-workbook = openpyxl.load_workbook('transfiden1.xlsx')
-sheet = workbook.worksheets[1] # 选择工作表（Sheet），默认选择第一个工作表 索引从0开始
-column = 1 # 文本从第几列开始
-def read2output(language, matchs):
-    
-    # 读取每行的第一项
-    for row in sheet.iter_rows(min_row=1, values_only=True):
-        if row and row[column] and row[language]:  # 确保行非空
-            if row[column] in matchs :
-                key = row[column + 1].lower().replace(" ", "_")
-                formatted_string = "\"%s\" = \"%s\"; // %s" % (key, row[language], row[column])
-                matchDic["%s" % (row[column])] = key
-                print(formatted_string)
-                # matchs = [value for value in matchs if value != row[0]]
-
-    print("\n")
-
-
-read2output(0, matchs)
-read2output(1, matchs)
-read2output(2, matchs)
-
-# 关闭 Excel 文件
-workbook.close()
-
-filtered_array = [x for x in matchs if x not in list(matchDic.keys())]
+filtered_array = [x for x in matchs if x not in exsitArr]
 print("\n未匹配的：", filtered_array)
-
-
