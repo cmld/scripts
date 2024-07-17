@@ -1,32 +1,78 @@
+# 蒲公英用户信息
+apiKey=90fbb4990c5322bf4d524a739fad2d0d
+userKey=a7d0381752b8f4a5b4ad2176f1d815c3
 
+# APP Store content上传相关  
+# ++印尼驿站
+store_api_key="YF8Q5V5YV4" #生成的时候有个.p8文件需要下载放到用户文件目录下特定名字的文件夹里
+store_issuer_id="69a6de89-c6c9-47e3-e053-5b8c7c11a4d1"
 
-projectName=JtStation-Indonesia-iOS
+# ++马来
+# store_api_key="RB9S793N8C" #生成的时候有个.p8文件需要下载放到用户文件目录下特定名字的文件夹里
+# store_issuer_id="a069fa47-aa6d-4256-8f6b-9ad3851f03c4"
+
+#--------------------------------------------#
+
+extension=".xcworkspace"
+file=$(find . -regex ".*$extension" -maxdepth 1)
+projectName=$(basename "$file" "$extension")
+
+if [ -z "$projectName" ]; then
+    echo "Error: 没有找到后缀为 $extension 的文件"
+    exit
+fi
 
 #获取当前环境路径
 prejectFilePath=`pwd` 
-workspacePath=$prejectFilePath/$projectName.xcworkspace
+echo "当前环境路径: $prejectFilePath"
 
-echo $workspacePath
+# 工作空间路径
+workspacePath=$prejectFilePath/$projectName.xcworkspace
+echo "工作空间路径: $workspacePath"
 
 time=$(date "+%Y-%m-%d-%H:%M:%S")
 
-# ipa导出成功后的存放路径
-output=/Users/yk/Desktop/archives/$projectName/$time
+if [ "$1" = "ipa" ];then
+    # echo "生产包 上传App Store content"
+    # ipa导出成功后的存放路径
+    output=~/Desktop/archives/$projectName/Release/$time
+    # 导出相关设置文件的位置路径 第一次需要用xcode Preoject->Archive, .xcarchive显示包内容中获取到
+    plistPath=~/Desktop/archives/$projectName/ExportOptions-store.plist
+else
+    # echo "测试包 上传到蒲公英"
+    # ipa导出成功后的存放路径
+    output=~/Desktop/archives/$projectName/$time
+    # 导出相关设置文件的位置路径 第一次需要用xcode Preoject->Archive, .xcarchive显示包内容中获取到
+    plistPath=~/Desktop/archives/$projectName/ExportOptions-ad.plist
+fi
+
 # 构建完成功后文件存放路径
 archiveOutput=$output/$projectName.xcarchive
-# 导出相关设置文件的位置路径 第一次需要用xcode Preoject->Archive, .xcarchive显示包内容中获取到
-plistPath=/Users/yk/Desktop/archives/$projectName/ExportOptions-ad.plist
 
-
-# 命令
-xcodebuild clean -workspace $workspacePath -scheme $projectName -configuration Release 
-xcodebuild archive -workspace $workspacePath -scheme $projectName -archivePath $archiveOutput -destination 'generic/platform=iOS'
-xcodebuild -exportArchive -archivePath $archiveOutput -exportPath $output -exportOptionsPlist $plistPath
-
+# ipa文件路径
+ipaFile=$output/$projectName.ipa
 
 #--------------------------------------------#
-# 需要配置绝对路径
-ipaPath=$output/$projectName.ipa
+
+build_pageage(){
+    op=$1
+    pp=$2
+    config=$3
+
+    echo "buildpath: $op | $pp | $config"
+    # 命令
+    xcodebuild clean -workspace "$workspacePath" -scheme "$projectName" -configuration "$config"
+    xcodebuild archive -workspace "$workspacePath" -scheme "$projectName" -configuration "$config" -archivePath "$archiveOutput" -destination 'generic/platform=iOS'
+    xcodebuild -exportArchive -archivePath "$archiveOutput" -exportPath "$op" -exportOptionsPlist "$pp"
+    # if [ "$3" = "Release" ];then
+    #     xcodebuild -exportArchive -archivePath "$archiveOutput" -exportPath "$op" -exportOptionsPlist "$pp"
+    # else
+    #     ipaDir=$output/Payload
+    #     mkdir "$ipaDir"
+    #     cp -r "$archiveOutput/Products/Applications/$projectName.app" "$ipaDir"
+    #     ditto -c -k --sequesterRsrc --keepParent "$ipaDir" "$ipaFile"
+    # fi
+}
 
 
 ### 方法简要说明：
@@ -104,19 +150,42 @@ function getJsonValuesByAwk() {
 # 上传接口失败 不知道为啥么
 # curl -H "Content-Type: multipart/form-data" -D - --form-string "key=$key" --form-string "signature=$signature" --form-string "x-cos-security-token=$token" -F "file=@/Users/yk/Desktop/Payload.ipa" $endpoint
 
-# 蒲公英用户信息
-apiKey=90fbb4990c5322bf4d524a739fad2d0d
-userKey=a7d0381752b8f4a5b4ad2176f1d815c3
 
 # API 1.0
-UPLOAD=`curl -F "file=@$ipaPath" \
--F "uKey=$userKey" \
--F "_api_key=$apiKey" \
-http://www.pgyer.com/apiv1/app/upload`
+upload_pgy(){
+    ipaP=$1
+    echo "ipa文件路径: $ipaP"
 
-data=`getJsonValuesByAwk "$UPLOAD" "data" "defaultValue"`
-buildV=`getJsonValuesByAwk "$data" "appBuildVersion" "defaultValue"`
-shortUrl=`getJsonValuesByAwk "$data" "appShortcutUrl" "defaultValue"`
+    UPLOAD=`curl -F "file=@\"$ipaP\"" \
+    -F "uKey=$userKey" \
+    -F "_api_key=$apiKey" \
+    http://www.pgyer.com/apiv1/app/upload`
 
-echo "http://www.pgyer.com/"$shortUrl | tr -d '"'
-echo "build:" $buildV
+    echo $UPLOAD
+
+    data=`getJsonValuesByAwk "$UPLOAD" "data" "defaultValue"`
+    buildV=`getJsonValuesByAwk "$data" "appBuildVersion" "defaultValue"`
+    shortUrl=`getJsonValuesByAwk "$data" "appShortcutUrl" "defaultValue"`
+
+    echo "http://www.pgyer.com/"$shortUrl | tr -d '"'
+    echo "build:" $buildV
+}
+
+#--------------------------------------------#
+
+
+if [ "$1" = "ipa" ];then
+    echo "生产包 上传App Store content"
+    build_pageage "$output" "$plistPath" "Release"
+    # 通过api_key上传到App Store content
+    xcrun altool --upload-app --type ios -f "$ipaFile" --apiKey $store_api_key --apiIssuer $store_issuer_id --verbose
+elif [ "$1" = "release" ]; then
+    echo "测试包Release 上传到蒲公英"
+    build_pageage "$output" "$plistPath" "Release"
+    upload_pgy "$ipaFile"
+else
+    echo "测试包UAT 上传到蒲公英"
+    build_pageage "$output" "$plistPath" "ReleaseUat"
+    upload_pgy "$ipaFile"
+fi
+

@@ -23,11 +23,11 @@ fi
 
 if [ "$1" = "Pro" ];then
     echo "生产包上传蒲公英"
-    flutter build ios --flavor Pro --release
+    flutter build ios --flavor Pro --release 
     # flutter build ipa --flavor Pro --release
 else
     echo "UAT包上传蒲公英"
-    flutter build ios --release
+    flutter build ios --release 
 fi
 
 

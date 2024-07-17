@@ -37,7 +37,7 @@ def extract_strings(directory, pattern):
 ####
 ####
 #### 找出项目中所有的待翻译文本
-directory_path = '/Users/yk/Desktop/JTS-Malaysia-VIP-iOS/Malaysia Customer App'
+directory_path = '/Users/yk/Desktop/jt-station-indonesia-ios/JtStation-Indonesia-iOS/Classes'
 
 regex_pattern = r'"([^"]*?)-r"'
 matchs = extract_strings(directory_path, regex_pattern)
@@ -57,7 +57,7 @@ print("\n待匹配：", matchs, "\n")
 ####
 ####
 #### 对比本地文件
-filename = '/Users/yk/Desktop/JTS-Malaysia-VIP-iOS/Malaysia Customer App/Others/zh-Hans.lproj/Localizable.strings'
+filename = '/Users/yk/Desktop/jt-station-indonesia-ios/JtStation-Indonesia-iOS/Classes/Manager/Lanaguage/zh-Hans.lproj/Localizable.strings'
 
 exsitArr = []
 # 打开文件
@@ -97,32 +97,36 @@ def char_in_array(char, arr):
     return char
 
 # 打开 Excel 文件
-workbook = openpyxl.load_workbook('/Users/yk/Downloads/马来需求表 (1).xlsx')
-sheet = workbook.worksheets[1] # 选择工作表（Sheet），默认选择第一个工作表 索引从0开始
-column = 1 # 文本从第几列开始
+workbook = openpyxl.load_workbook('/Users/yk/Downloads/alskjflksjf.xlsx')
+sheet = workbook.worksheets[0] # 选择工作表（Sheet），默认选择第一个工作表 索引从0开始
+column = 0 # 文本从第几列开始
 matchDic = {}
-def read2output(language, matchs):
-    matchDic = {}
+def read2output(language, matchs): # language：要提取第几列内容
     # 读取每行的第一项
     for row in sheet.iter_rows(min_row=1, values_only=True):
         if row and row[column] and row[language]:  # 确保行非空
-            if row[column] in matchs :
+            if row[column] in matchs and row[column + 1] :
                 key = row[column + 1].lower().replace(" ", "_")
                 key = char_in_array(key, list(matchDic.values()))
                 formatted_string = "\"%s\" = \"%s\"; // %s" % (key, row[language], row[column])
                 matchDic["%s" % (row[column])] = key
                 print(formatted_string)
                 # matchs = [value for value in matchs if value != row[0]]
-
     print("\n")
 
+read2output(0, matchs)
+matchDic = {}
 read2output(1, matchs)
+matchDic = {}
 read2output(2, matchs)
-read2output(3, matchs)
 
 # 关闭 Excel 文件
 workbook.close()
 
+print(list(matchDic.keys()))
 filtered_array = [x for x in matchs if x not in list(matchDic.keys())]
 
-print("\n-------- Excel 未匹配的：\n", filtered_array)
+print("\n-------- Excel 未匹配的：\n")
+for item in filtered_array:
+    print(item)
+print("\n-------- Excel 未匹配的\n")

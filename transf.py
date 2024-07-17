@@ -45,7 +45,7 @@ print("\n待匹配：", matchs, "\n")
 ############
 
 ## 以下是搜索输出
-matchs = ['MS', 'NE', 'COD金额 > 0', '已复制', '保价金额', '长/宽/高', '运输中']
+matchs = ['邮箱验证', '验证成功', '请再次输入密码', '确认', '请输入验证码', '邮箱收不到验证码？试试发送手机验证码！']
 
 matchDic = {}
 
@@ -68,9 +68,9 @@ def read2output(language, matchs):
     print("\n")
 
 
-read2output(0, matchs)
 read2output(1, matchs)
 read2output(2, matchs)
+read2output(3, matchs)
 
 # 关闭 Excel 文件
 workbook.close()
