@@ -1,6 +1,6 @@
 import re
 import os
-import openpyxl
+# import openpyxl
 import sys
 
 filename = '/Users/yk/Downloads/DeliverySignScanBillCode.kt'

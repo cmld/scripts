@@ -4,12 +4,12 @@ userKey=a7d0381752b8f4a5b4ad2176f1d815c3
 
 # APP Store content上传相关  
 # ++印尼驿站
-store_api_key="YF8Q5V5YV4" #生成的时候有个.p8文件需要下载放到用户文件目录下特定名字的文件夹里
-store_issuer_id="69a6de89-c6c9-47e3-e053-5b8c7c11a4d1"
+# store_api_key="YF8Q5V5YV4" #生成的时候有个.p8文件需要下载放到用户文件目录下特定名字的文件夹里
+# store_issuer_id="69a6de89-c6c9-47e3-e053-5b8c7c11a4d1"
 
 # ++马来
-# store_api_key="RB9S793N8C" #生成的时候有个.p8文件需要下载放到用户文件目录下特定名字的文件夹里
-# store_issuer_id="a069fa47-aa6d-4256-8f6b-9ad3851f03c4"
+store_api_key="RB9S793N8C" #生成的时候有个.p8文件需要下载放到用户文件目录下特定名字的文件夹里
+store_issuer_id="a069fa47-aa6d-4256-8f6b-9ad3851f03c4"
 
 #--------------------------------------------#
 
