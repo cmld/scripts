@@ -78,7 +78,7 @@ for item in filtered_array:
     print(item)
 print("\n-------- 本地文件 未匹配的\n")
 
-# sys.exit()
+sys.exit()
 
 
 
@@ -98,9 +98,9 @@ def char_in_array(char, arr):
     return char
 
 # 打开 Excel 文件
-workbook = openpyxl.load_workbook('/Users/yk/Downloads/987987987.xlsx')
-sheet = workbook.worksheets[0] # 选择工作表（Sheet），默认选择第一个工作表 索引从0开始
-column = 0 # 文本从第几列开始
+workbook = openpyxl.load_workbook('/Users/yk/Downloads/马来需求表.xlsx')
+sheet = workbook.worksheets[1] # 选择工作表（Sheet），默认选择第一个工作表 索引从0开始
+column = 1 # 文本从第几列开始
 matchDic = {}
 def read2output(language, matchs): # language：要提取第几列内容
     # 读取每行的第一项
@@ -109,7 +109,7 @@ def read2output(language, matchs): # language：要提取第几列内容
             columnValu = row[column].strip()
             languageValue = row[language].strip()
             if columnValu in matchs and row[column + 1] :
-                key = row[column + 1].lower().replace(" ", "_")
+                key = row[column + 1].lower().strip().replace(" ", "_").replace(",", "").replace(":", "").replace(".", "").replace("/", "").replace("?", "").replace(";", "").replace("!", "")
                 key = char_in_array(key, list(matchDic.values()))
                 formatted_string = "\"%s\" = \"%s\"; // %s" % (key, languageValue, columnValu)
                 matchDic["%s" % (columnValu)] = key
